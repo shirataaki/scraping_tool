@@ -24,6 +24,11 @@ class Mywin(wx.Frame):
   
    def OnClicked(self, event):
       url = self.text.GetValue()
+      if not url.strip():  # URLが空白または未入力の場合
+        dlg = wx.MessageDialog(self, "URLを入力してください。", "Warning", wx.OK | wx.ICON_WARNING)
+        dlg.ShowModal()
+        dlg.Destroy()
+        return
       main_url = urlparse(url).netloc
       delay = self.slider.GetValue() / 10.0  # スライダーの値を10で割ることで、0.0から3.0の範囲を得る
       data = scraping.explore_links_until_exhausted(url, main_url, delay)

@@ -1,26 +1,28 @@
-from urllib.parse import urlparse, urlunparse, parse_qsl, urlencode
+from tkinter import *
+from tkinter import ttk
 
-url = "https://www.digitalservice.metro.tokyo.lg.jp/innovativeprojects/robot_showcase.html"
-print(urlparse(url).netloc)
-def normalize_url(url):
-    # URLを6つのコンポーネントに分割
-    scheme, netloc, path, params, query, fragment = urlparse(url)
+root = Tk()
+frame1 = ttk.Frame(root)
+frame1.grid()
 
-    # ネットロケーションを小文字にする
-    netloc = netloc.lower()
+style = ttk.Style()
+style.theme_use('classic')
 
-    # クエリパラメータをソートする
-    query = urlencode(sorted(parse_qsl(query)))
+label1 = ttk.Label(
+    frame1,
+    text='Hello',
+    background='#0000aa',
+    foreground='#ffffff',
+    padding=(5, 10))
+label1.grid(row=0, column=0)
 
-    # 正規化されたURLを作成
-    normalized_url = urlunparse((scheme, netloc, path, params, query, fragment))
+label2 = ttk.Label(
+    frame1,
+    text='World',
+    background='#ffffff',
+    width=20,
+    anchor=E,
+    padding=(5, 10))
+label2.grid(row=0, column=1)
 
-    print(f"scheme = {scheme}")
-    print(f"netloc = {netloc}")
-    print(f"path = {path},  params = {params}")
-    print(f"query = {query}, fragment = {fragment}") 
-
-    return normalized_url, netloc
-
-nor,net = normalize_url(url)
-print(net)
+root.mainloop()

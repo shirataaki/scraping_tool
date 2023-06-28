@@ -12,6 +12,7 @@ from urllib.parse import urlparse, urlunparse, parse_qsl, urlencode
 # 対象のURL
 url2 = 'https://www.digitalservice.metro.tokyo.lg.jp/'
 url3 = 'https://www.digitalservice.metro.tokyo.lg.jp/innovativeprojects/robot_showcase.html'
+main_url = urlparse(url2).netloc
 
 # 同じページを複数回訪れるのを防ぐために、訪れたリンクを保存
 visited_links = set()
@@ -76,7 +77,7 @@ def get_links_recursive(url, num):
 
         # HTMLから抽出した相対URLを絶対URLに変換し、正規化する
         full_url = normalize_url( urljoin(url, relative_url) )
-        if 'https://www.digitalservice.metro.tokyo.lg.jp/' in full_url:
+        if main_url in full_url:
             if full_url in visited_links:
                 continue
 

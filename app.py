@@ -7,13 +7,24 @@ class Mywin(wx.Frame):
       super(Mywin, self).__init__(parent, title = title, size = (300,350)) 
       panel = wx.Panel(self) 
       box = wx.BoxSizer(wx.VERTICAL)
-
-      self.text = wx.TextCtrl(panel, style = wx.TE_MULTILINE, size = (250,150))
-      box.Add(self.text, 1, wx.EXPAND | wx.ALL, 5)
-
-      self.delay_box = wx.TextCtrl(panel, size=(250, 20))
-      self.delay_box.SetValue('0.7')  # Set initial delay value
-      box.Add(self.delay_box, 0, wx.EXPAND | wx.ALL, 5)
+      
+      self.title = wx.StaticText(panel, label="Scraping App", style=wx.ALIGN_CENTER)
+      box.Add(self.title, 0, wx.EXPAND | wx.ALL, 5)
+      
+      url_sizer = wx.BoxSizer(wx.HORIZONTAL)
+      url_label = wx.StaticText(panel, label="URL：")
+      url_sizer.Add(url_label, 0, wx.ALL|wx.CENTER, 5)
+      self.text = wx.TextCtrl(panel, size = (250,60), style=wx.TE_MULTILINE)
+      url_sizer.Add(self.text, 1, wx.EXPAND | wx.ALL, 5)
+      box.Add(url_sizer, 0, wx.EXPAND | wx.ALL, 5)
+      
+      delay_sizer = wx.BoxSizer(wx.HORIZONTAL)
+      delay_label = wx.StaticText(panel, label="遅延時間：")
+      delay_sizer.Add(delay_label, 0, wx.ALL|wx.CENTER, 5)
+      self.delay_box = wx.TextCtrl(panel, size=(60, 20))
+      self.delay_box.SetValue('0.7')  # 遅延時間を入力
+      delay_sizer.Add(self.delay_box, 0, wx.ALL|wx.CENTER, 5)
+      box.Add(delay_sizer, 0, wx.EXPAND | wx.ALL, 5)
 
       btn = wx.Button(panel, -1, "Scrape!")
       box.Add(btn, 0, wx.EXPAND | wx.ALL, 5)

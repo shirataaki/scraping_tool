@@ -12,13 +12,10 @@ visited_links = set()
 def normalize_url(url):
     # URLを6つのコンポーネントに分割
     scheme, netloc, path, params, query, fragment = urlparse(url)
-
     # ネットロケーションを小文字にする
     netloc = netloc.lower()
-
     # クエリパラメータをソートする
     query = urlencode(sorted(parse_qsl(query)))
-
     # 正規化されたURLを作成
     normalized_url = urlunparse((scheme, netloc, path, params, query, fragment))
 

@@ -11,8 +11,9 @@ class Mywin(wx.Frame):
       self.text = wx.TextCtrl(panel, style = wx.TE_MULTILINE, size = (250,150))
       box.Add(self.text, 1, wx.EXPAND | wx.ALL, 5)
 
-      self.slider = wx.Slider(panel, value = 20, minValue = 0, maxValue = 30, size = (250, -1), style = wx.SL_LABELS)
-      box.Add(self.slider, 0, wx.EXPAND | wx.ALL, 5)
+      self.delay_box = wx.TextCtrl(panel, size=(250, 20))
+      self.delay_box.SetValue('0.7')  # Set initial delay value
+      box.Add(self.delay_box, 0, wx.EXPAND | wx.ALL, 5)
 
       btn = wx.Button(panel, -1, "Scrape!")
       box.Add(btn, 0, wx.EXPAND | wx.ALL, 5)
@@ -30,7 +31,13 @@ class Mywin(wx.Frame):
         dlg.Destroy()
         return
       main_url = urlparse(url).netloc
-      delay = self.slider.GetValue() / 10.0  # スライダーの値を10で割ることで、0.0から3.0の範囲を得る
+      try:
+        delay = float(self.delay_box.GetValue())
+      except ValueError:
+        dlg = wx.MessageDialog(self, "適切な遅延時間（数値）を入力してください。", "Warning", wx.OK | wx.ICON_WARNING)
+        dlg.ShowModal()
+        dlg.Destroy()
+        return
       data = scraping.explore_links_until_exhausted(url, main_url, delay)
       scraping.write_to_csv(data, 'output.csv')
       dlg = wx.MessageDialog(self, "Scraping Completed! Data written to output.csv.", "Info", wx.OK)

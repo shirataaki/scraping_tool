@@ -11,8 +11,8 @@ from urllib.parse import urlparse, urlunparse, parse_qsl, urlencode
 
 # 対象のURL
 url2 = 'https://www.digitalservice.metro.tokyo.lg.jp/'
-url3 = 'https://www.digitalservice.metro.tokyo.lg.jp/innovativeprojects/robot_showcase.html'
-main_url = urlparse(url2).netloc
+url3 = 'https://www.digitalservice.metro.tokyo.lg.jp/smarttokyo/5gservice.html'
+main_url = urlparse(url3).netloc
 
 # 同じページを複数回訪れるのを防ぐために、訪れたリンクを保存
 visited_links = set()
@@ -34,7 +34,10 @@ def normalize_url(url):
 
 def get_links_recursive(url, num):
     try:
-        reqs = requests.get(url)
+        reqs = requests.get(url, timeout=10)  # timeoutパラメータを設定
+    except requests.exceptions.Timeout:
+        print(f"{url} へのアクセスがタイムアウトしました")
+        return [], num
     except Exception as e:
         print(f"{url} へのアクセスに失敗しました")
         return [], num
@@ -87,7 +90,17 @@ def get_links_recursive(url, num):
             if ".pdf" in full_url or ".doc" in full_url or ".xlsx" in full_url or ".pptx" in full_url:
                 html = "" 
             else:
-                html = str(soup)
+                try: # リンク先のURLにリクエストを送ってHTMLを取得
+                    reqs_link = requests.get(full_url)
+                    soup_link = BeautifulSoup(reqs_link.content, 'lxml')
+                    html = str(soup_link.main) # HTMLのmain部分を抽出
+                except requests.exceptions.Timeout:
+                    print(f"{full_url} へのHTML取得のリクエストがタイムアウトしました")
+                    html = "error"
+                except Exception as e:
+                    print(f"{full_url} へのHTML取得のリクエストに失敗しました")
+                    html = ""
+            
             data.append([title, full_url, html, fetch_date])
             num += 1
             print(f"{num}個目のURLを発見: {full_url}")
@@ -101,6 +114,11 @@ def explore_links_until_exhausted(url):
     all_data = []
     new_links = [url]
     num = 0
+
+    # 最初のurlのデータを取得
+    start_data, num = get_links_recursive(url, num)
+    print(start_data)
+    all_data.extend(start_data)
 
     while new_links:
         current_url = new_links.pop(0)
@@ -117,4 +135,4 @@ data = explore_links_until_exhausted(url3)
 
 # DataFrameを作成し、CSVとして出力
 df = pd.DataFrame(data, columns=['Title', 'URL', 'HTML', '取得日'])
-df.to_csv('digital_01.csv', index=False, encoding='utf-8')
+df.to_csv('digital_02.csv', index=False, encoding='utf-8')
